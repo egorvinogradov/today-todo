@@ -14,6 +14,17 @@ function App(params){
         return Array.prototype.indexOf.call(els.length ? els : [els], element) > -1;
     };
 
+    function makeEmpty(element){
+        element.innerHTML = '';
+        return element;
+    };
+
+    function removeEl(element){
+        if ( element.parentNode ) {
+            element.parentNode.removeChild(element);
+        }
+    }
+
     function getParents(selector, element){
         var matches = [];
         var parent = element.parentNode;
@@ -66,6 +77,7 @@ function App(params){
             id: containerId,
             innerHTML: template(taskTemplate, data)
         });
+        console.log('Created new task:', data.text, data.checked ? '(resolved)' : '');
         return bindTaskEvents( getEl('.todo-item', container) );
     };
 
@@ -77,7 +89,6 @@ function App(params){
             item.parentNode.removeChild(item);
             model.remove(id);
             model.save();
-            console.log(id);
         }, false)
         return element;
     };
@@ -86,12 +97,19 @@ function App(params){
         return getEl('.todo-list');
     }
 
-    function render(model){
+    function renderTodoList(model){
         var container = getContainer();
-        container.innerHTML = '';
+        makeEmpty(container);
         model.data.forEach(function(item){
             container.appendChild(createTask(item));
         });
+    };
+
+    function renderNoTasksMessage(){
+        makeEmpty(getContainer()).appendChild(createEl('div', {
+            className: 'todo-no-items',
+            innerHTML: 'No tasks created'
+        }));
     };
 
     function addTask(text){
@@ -104,6 +122,7 @@ function App(params){
             checked: false,
             id: taskId
         });
+        removeEl(getEl('.todo-no-items'));
         getContainer().appendChild(taskEl);
     };
 
@@ -139,9 +158,15 @@ function App(params){
 
     function initialize(){
         model.setDate(getDate());
-        model.fetch(function(){
-            render(model);
-            initializeTaskField();
+        model.fetch({
+            success: function(){
+                renderTodoList(model);
+                initializeTaskField();
+            },
+            error: function(){
+                renderNoTasksMessage();
+                initializeTaskField();
+            }
         });
     };
 

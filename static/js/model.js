@@ -123,14 +123,14 @@ function Model(params){
         }
     };
 
-    function fetchModel(callback){
+    function fetchModel(callbacks){
         function fetchLocally(){
             try {
                 var data = JSON.parse(getFromLocalStorage());
                 if ( data.length ) {
                     console.log('Fetched model from local storage', data);
                     setModelData(data);
-                    callback(data);
+                    callbacks.success && callbacks.success(data);
                 }
                 else {
                     handleError();
@@ -141,8 +141,9 @@ function Model(params){
             }
         }
         function handleError(){
-            setModelData([]);
             console.error('Can\'t fetch model');
+            setModelData([]);
+            callbacks.error && callbacks.error();
         }
         if ( navigator.onLine ) {
             ajax({
@@ -153,7 +154,7 @@ function Model(params){
                 success: function(data){
                     console.log('Fetched model from server', data);
                     setModelData(data);
-                    callback(data);
+                    callbacks.success && callbacks.success(data);
                 },
                 error: fetchLocally
             });
@@ -218,7 +219,7 @@ function Model(params){
         return removeItem.apply(this, arguments);
     };
 
-    this.fetch = function(callback){
+    this.fetch = function(callbacks){
         return fetchModel.apply(this, arguments);
     };
 
