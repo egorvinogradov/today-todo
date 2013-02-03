@@ -29,15 +29,15 @@
         <input class="todo-field" tabindex="1" type="text" placeholder="New task" autofocus>
     </div>
 
-	<script type="application/template" id="template-task">
-	    <li class="todo-item" data-id="{{ id }}">
-	        <label class="todo-label">
-	            <input class="todo-checkbox" tabindex="2" type="checkbox" {% checked ? 'checked' : '' %}>
-	            <span class="todo-text">{{ text }}</span>
-	        </label>
-	        <span class="todo-remove" title="Remove">x</span>
-	    </li>
-	</script>
+    <script type="application/template" id="template-task">
+        <li class="todo-item" data-id="{{ id }}">
+            <label class="todo-label">
+                <input class="todo-checkbox" tabindex="2" type="checkbox" {% checked ? 'checked' : '' %}>
+                <span class="todo-text">{{ text }}</span>
+            </label>
+            <span class="todo-remove" title="Remove">x</span>
+        </li>
+    </script>
 
 </body>
 </html>
